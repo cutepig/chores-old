@@ -30,7 +30,7 @@ export class Provider extends React.Component {
 export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent =>
   class Firebase extends React.Component {
     static get displayName () {
-      return `Firebase(${wrappedComponent.displayName})`;
+      return `Firebase(${wrappedComponent.displayName || wrappedComponent.name})`;
     }
 
     static get contextTypes () {
@@ -42,17 +42,35 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
       this.state = {};
     }
 
+    shouldComponentUpdate () {
+      // TODO:
+      console.log('shouldComponentUpdate', Firebase.displayName);
+      return true;
+    }
+
     componentWillMount () {
       const {firebase} = this.context;
 
-      // TODO: Allow refs to be functions
+      console.log('componentWillMount', Firebase.displayName);
 
       // Handle subscriptions to refs
-      const unsubscriptions = _.mapValues(mapRefsToProps, (path, key) =>
+      // FIXME: Do this again when props change
+      const refs = _.isFunction(mapRefsToProps) ? mapRefsToProps(this.props, firebase) : {};
+      const unsubscriptions = _.mapValues(refs, (path, key) => {
+        const onValue = snapshot => this.setState({...this.state, [key]: snapshot.val()});
+
+        // FIXME: Wrap this in a function that checks if return value is string and then
+        // handles it as below
+        if (_.isFunction(path))
+          return path(onValue);
+
+        if (!path)
+          return path;
+
         // FIXME: cancelCallbackOrContext
         // @see https://firebase.google.com/docs/reference/js/firebase.database.Reference#on
-        firebase.database().ref(path).on('value', snapshot =>
-          this.setState({...this.state, [key]: snapshot.val()})));
+        return firebase.database().ref(path).on('value', onValue);
+      });
 
       this.unsubscriptions = unsubscriptions;
     }
@@ -60,26 +78,32 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
     componentWillUnmount () {
       const {firebase} = this.context;
 
+      console.log('componentWillUnmount', Firebase.displayName);
+
       // Handle unsubscriptions
       _.forEach(this.unsubscriptions, (path, fn) =>
-        firebase.database().ref(path).off('value', fn));
+        _.isFunction(fn) && firebase.database().ref(path).off('value', fn));
     }
 
     render () {
       const {props, state} = this;
       const {firebase} = this.context;
-      // TODO: Map over these and wrap functions in promise catcher or find a better strategy
-      const firebaseProps = _.isFunction(mapFirebaseToProps) ? mapFirebaseToProps(firebase) : {};
+
+      const firebaseProps = _.mapValues(
+        _.isFunction(mapFirebaseToProps) ? mapFirebaseToProps(firebase) : {},
+        // FIXME: Some proper error handling
+        // eslint-disable-next-line no-console
+        (fn, key) => (...args) => fn(...args).catch(error => console.error(Firebase.displayName, key, error))
+      );
 
       return React.createElement(wrappedComponent, {...props, ...state, ...firebaseProps, firebase});
     }
   };
 
-// Erm provide login functionality from here?
 export const authProvider = wrappedComponent =>
   class AuthProvider extends React.Component {
     static get displayName () {
-      return `AuthProvider(${wrappedComponent.displayName})`;
+      return `AuthProvider(${wrappedComponent.displayName || wrappedComponent.name})`;
     }
 
     static get contextTypes () {
@@ -89,6 +113,11 @@ export const authProvider = wrappedComponent =>
     constructor (props) {
       super(props);
       this.state = {};
+    }
+
+    shouldComponentUpdate () {
+      console.log('shouldComponentUpdate', AuthProvider.displayName);
+      return true;
     }
 
     componentWillMount () {

@@ -12,20 +12,24 @@ const config = {
 };
 firebase.initializeApp(config);
 
-const GroupsView = ({groups}) =>
-  <div className="groups">
-    <ul className="groups__list">
-      {_.map(groups, (group, id) =>
-        <li className="groups__list__item" key={id}>
-          {`${id}:  ${group.name}`}
-        </li>
-      )}
-    </ul>
-  </div>;
+const conditionalRender = predicate => wrappedComponent =>
+  class ConditionalRender extends React.Component {
+    static get displayName () {
+      return `ConditionalRender(${wrappedComponent.displayName || wrappedComponent.name})`;
+    }
 
-GroupsView.propTypes = {
-  groups: PropTypes.object
-};
+    shouldComponentUpdate () {
+      console.log('shouldComponentUpdate', ConditionalRender.displayName);
+      return true;
+    }
+
+    render () {
+      const {props} = this;
+
+      console.log(ConditionalRender.displayName, predicate(props), props);
+      return predicate(props) ? React.createElement(wrappedComponent, props) : null;
+    }
+  };
 
 const UserView = ({user, login, logout}) =>
   <div className="user">
@@ -45,6 +49,30 @@ UserView.propTypes = {
   logout: PropTypes.func.isRequired
 };
 
+const UserGroupsView = ({groups}) => {
+  console.log('UserGroupsView', groups);
+  return <div className="user-groups">
+    <ul className="user-groups__list">
+    {_.map(groups, (name, id) =>
+      <li key={id}>{name}</li>
+    )}
+    </ul>
+  </div>;
+}
+
+UserGroupsView.propTypes = {
+  user: PropTypes.object.isRequired,
+  groups: PropTypes.object
+};
+
+const UserGroups = _.flowRight(
+  authProvider,
+  conditionalRender(({user}) => !!user),
+  connect(({user}) => ({
+    groups: user && `/users/${user.uid}/groups`
+  }))
+)(UserGroupsView);
+
 const User = connect(null, firebase => ({
   login: () => {
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -55,15 +83,11 @@ const User = connect(null, firebase => ({
     firebase.auth().signOut()
 }))(authProvider(UserView));
 
-const Groups = connect({
-  groups: '/groups'
-})(GroupsView);
-
 function App () {
   return <Provider firebase={firebase}>
     <div className="app">
       <User />
-      <Groups />
+      <UserGroups />
     </div>
   </Provider>;
 };
