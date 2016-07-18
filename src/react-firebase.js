@@ -112,7 +112,7 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
 
       const firebaseProps = _.mapValues(
         _.isFunction(mapFirebaseToProps) ? mapFirebaseToProps(firebase) : {},
-        // FIXME: Some proper error handling
+        // FIXME: Some proper error handling, maybe provide an error handler in props/params?
         // eslint-disable-next-line no-console
         (fn, key) => (...args) => fn(...args).catch(error => console.error(Firebase.displayName, key, error))
       );

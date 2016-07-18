@@ -19,35 +19,61 @@ const conditionalRender = predicate => wrappedComponent =>
     }
 
     shouldComponentUpdate () {
-      console.log('shouldComponentUpdate', ConditionalRender.displayName);
+      console.log('shouldComponentUpdate', ConditionalRender.displayName);  // eslint-disable-line
       return true;
     }
 
     render () {
       const {props} = this;
 
-      console.log(ConditionalRender.displayName, predicate(props), props);
+      console.log(ConditionalRender.displayName, predicate(props), props);    // eslint-disable-line
       return predicate(props) ? React.createElement(wrappedComponent, props) : null;
     }
   };
 
-const UserView = ({user, login, logout}) =>
-  <div className="user">
+const LoginGoogleButtonView = ({login}) =>
+  <button className="login-google" onClick={login}>
+    Login with Google
+  </button>;
+
+LoginGoogleButtonView.propTypes = {
+  login: PropTypes.func.isRequired
+};
+
+const LoginGoogleButton = connect(null, firebase => ({
+  login: () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('profile,email');
+    return firebase.auth().signInWithPopup(provider);
+  }
+}))(LoginGoogleButtonView);
+
+const LogoutButtonView = ({logout}) =>
+  <button className="logout" onClick={logout}>
+    Logout
+  </button>;
+
+LogoutButtonView.propTypes = {
+  logout: PropTypes.func.isRequired
+};
+
+const LogoutButton = connect(null, firebase => ({
+  logout: () => firebase.auth().signOut()
+}))(LogoutButtonView);
+
+const UserInfoView = ({user}) =>
+  <div className="user-info">
     {user
       ? `${user.uid} ${user.displayName}`
       : 'Not logged in'
     }
-    {user
-      ? <button className="user__logout" onClick={logout}>Logout</button>
-      : <button className="user__login" onClick={login}>Login</button>
-    }
   </div>;
 
-UserView.propTypes = {
-  user: PropTypes.object,
-  login: PropTypes.func.isRequired,
-  logout: PropTypes.func.isRequired
+UserInfoView.propTypes = {
+  user: PropTypes.object
 };
+
+const UserInfo = authProvider(UserInfoView);
 
 const GroupSelectView = ({groups, onSelectGroup}) =>
   <div className="group-select">
@@ -74,28 +100,35 @@ const GroupSelect = _.flowRight(
   }))
 )(GroupSelectView);
 
-const User = connect(null, firebase => ({
-  login: () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    provider.addScope('profile,email');
-    return firebase.auth().signInWithPopup(provider);
-  },
-  logout: () =>
-    firebase.auth().signOut()
-}))(authProvider(UserView));
+const AppPanel = () => {
+  const onSelectGroup = console.log.bind(console, 'onSelectGroup');     // eslint-disable-line
+
+  return <div className="app-panel">
+    <UserInfo />
+    <LogoutButton />
+    <GroupSelect onSelectGroup={onSelectGroup} />
+  </div>;
+};
 
 const AuthView = _.flowRight(
   authProvider,
   conditionalRender(({user}) => !!user)
 )(({children}) => React.Children.only(children));
 
+const NonAuthView = _.flowRight(
+  authProvider,
+  conditionalRender(({user}) => !user)
+)(({children}) => React.Children.only(children));
+
 function App () {
   return <Provider firebase={firebase}>
     <div className="app">
-      <User />
       <AuthView>
-        <GroupSelect onSelectGroup={console.log.bind(console, 'onSelectGroup')}/>
+        <AppPanel />
       </AuthView>
+      <NonAuthView>
+        <LoginGoogleButton />
+      </NonAuthView>
     </div>
   </Provider>;
 };
