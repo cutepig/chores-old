@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import firebase from 'firebase';
 import {Provider, authProvider, connect} from './react-firebase';
 import * as _ from 'lodash';
-import {withState, mapProps} from 'recompose';
+import {withState, withHandlers, mapProps} from 'recompose';
 
 const config = {
   apiKey: 'AIzaSyDg0XgimVokGyOIQREFSSUow441WFx5O1w',
@@ -108,9 +108,9 @@ const TaskList = connect(({groupId}) => ({
 
 const DeedCard = ({deed}) =>
   <article className="deed-card">
-    <h1>{deed.task.name}</h1>
-    <h2>{deed.value || deed.task.value}</h2>
-    <h3>{deed.member && deed.displayName}</h3>
+    <h1>{_.get(deed, ['task', 'name'])}</h1>
+    <h2>{_.get(deed, 'value', _.get(deed, ['task', 'value']))}</h2>
+    <h3>{_.get(deed, ['member', 'displayName'])}</h3>
   </article>;
 
 DeedCard.propTypes = {
@@ -126,7 +126,7 @@ const DeedListMapper = ({deeds, tasks, user, ...rest}) => ({
   deeds: _.mapValues(
     _.filter(deeds, deed => deed.memberId === user.uid),
     deed => ({
-      task: tasks[deed.taskId],
+      task: _.get(tasks, deed.taskId),
       member: user
     })),
   ...rest
@@ -152,10 +152,8 @@ const DeedList = _.flowRight(
   mapProps(DeedListMapper)
 )(DeedListView);
 
-const GroupSelectView = ({groups, onSelectGroup}) => {
-  const onChange = ev => onSelectGroup(ev.currentTarget.value);
-
-  return <div className="group-select">
+const GroupSelectView = ({groups, onChange}) =>
+  <div className="group-select">
     <label className="group-select__label">
       Select group
       <select className="group-select__select" defaultValue="" onChange={onChange}>
@@ -166,18 +164,20 @@ const GroupSelectView = ({groups, onSelectGroup}) => {
       </select>
     </label>
   </div>;
-};
 
 GroupSelectView.propTypes = {
   groups: PropTypes.object,
-  onSelectGroup: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired
 };
 
 const GroupSelect = _.flowRight(
   authProvider,
   connect(({user}, firebase) => ({
     groups: user && `/users/${user.uid}/groups`
-  }))
+  })),
+  withHandlers({
+    onChange: ({onSelectGroup}) => ev => onSelectGroup(ev.currentTarget.value)
+  })
 )(GroupSelectView);
 
 const AppPanelView = ({group, setGroup}) => {
