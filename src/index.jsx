@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import firebase from 'firebase';
 import {Provider, authProvider, connect} from './react-firebase';
 import * as _ from 'lodash';
+import {withState} from 'recompose';
 
 const config = {
   apiKey: 'AIzaSyDg0XgimVokGyOIQREFSSUow441WFx5O1w',
@@ -75,11 +76,43 @@ UserInfoView.propTypes = {
 
 const UserInfo = authProvider(UserInfoView);
 
-const GroupSelectView = ({groups, onSelectGroup}) =>
-  <div className="group-select">
+const TaskCard = ({taskId, task}) =>
+  <article className="task-card">
+    <h1>{task.name}</h1>
+    <h2>{task.value}</h2>
+    <p>{task.description}</p>
+  </article>;
+
+TaskCard.propTypes = {
+  taskId: PropTypes.string.isRequired,
+  task: PropTypes.object.isRequired
+};
+
+const TaskListView = ({tasks}) =>
+  <ul className="task-list">
+  {_.map(tasks, (task, id) =>
+    <li className="task-list__item" key={id}>
+      <TaskCard taskId={id} task={task} />
+    </li>
+  )}
+  </ul>;
+
+TaskListView.propTypes = {
+  groupId: PropTypes.string,
+  tasks: PropTypes.object
+};
+
+const TaskList = connect(({groupId}) => ({
+  tasks: groupId && `/groups/${groupId}/tasks`
+}))(TaskListView);
+
+const GroupSelectView = ({groups, onSelectGroup}) => {
+  const onChange = ev => onSelectGroup(ev.currentTarget.value);
+
+  return <div className="group-select">
     <label className="group-select__label">
       Select group
-      <select className="group-select__select" defaultValue="" onChange={onSelectGroup}>
+      <select className="group-select__select" defaultValue="" onChange={onChange}>
         <option disabled value="">Select group</option>
         {_.map(groups, (name, id) =>
           <option key={id} value={id}>{name}</option>
@@ -87,6 +120,7 @@ const GroupSelectView = ({groups, onSelectGroup}) =>
       </select>
     </label>
   </div>;
+};
 
 GroupSelectView.propTypes = {
   groups: PropTypes.object,
@@ -100,15 +134,24 @@ const GroupSelect = _.flowRight(
   }))
 )(GroupSelectView);
 
-const AppPanel = () => {
-  const onSelectGroup = console.log.bind(console, 'onSelectGroup');     // eslint-disable-line
+const AppPanelView = ({group, setGroup}) => {
+  const onSelectGroup = groupId => setGroup(() => groupId);
 
   return <div className="app-panel">
     <UserInfo />
     <LogoutButton />
     <GroupSelect onSelectGroup={onSelectGroup} />
+    <h3>Group ID: {group}</h3>
+    <TaskList groupId={group}/>
   </div>;
 };
+
+AppPanelView.propTypes = {
+  group: PropTypes.string,
+  setGroup: PropTypes.func.isRequired
+};
+
+const AppPanel = withState('group', 'setGroup', null)(AppPanelView);
 
 const AuthView = _.flowRight(
   authProvider,

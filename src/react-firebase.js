@@ -84,7 +84,7 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
     }
 
     componentWillReceiveProps (nextProps) {
-      console.log('componentWillReceiveProps', Firebase.displayName, nextProps);
+      console.log('componentWillReceiveProps', Firebase.displayName, {...nextProps});
 
       this.unsubscribe = this._unsubscribe();
       this.unsubscriptions = this._subscribe(nextProps);
@@ -144,6 +144,11 @@ export const authProvider = wrappedComponent =>
     componentWillMount () {
       const {firebase} = this.context;
 
+      // FIXME: It does seem that firebase executes these async which causes
+      // async update issues where one component above thinks user is there but
+      // the lower component doesnt and there's a mismatch
+      // Maybe use static unsubscribe and reference counting on componentWillMount/Unmount?
+      // Argh that wouldn't solve anything since we still have many instances of each different class
       this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
         console.log('onAuthStateChanged', AuthProvider.displayName, user);
         this.setState({...this.state, user});
