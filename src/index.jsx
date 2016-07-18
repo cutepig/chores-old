@@ -27,13 +27,32 @@ GroupsView.propTypes = {
   groups: PropTypes.object
 };
 
+const UserView = ({user}) =>
+  <div className="user">
+    {user
+      ? `${user.uid} ${user.displayName}`
+      : 'No user'
+    }
+  </div>;
+
+UserView.propTypes = {
+  user: PropTypes.object
+};
+
+const User = connect(null, firebase => ({
+  user: firebase.auth().currentUser
+}))(UserView);
+
 const Groups = connect({
   groups: '/groups'
 })(GroupsView);
 
 function App () {
   return <Provider firebase={firebase}>
-    <Groups />
+    <div className="app">
+      <User />
+      <Groups />
+    </div>
   </Provider>;
 };
 
