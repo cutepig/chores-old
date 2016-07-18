@@ -48,16 +48,17 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
       return true;
     }
 
-    componentWillMount () {
+    _subscribe (props) {
       const {firebase} = this.context;
 
-      console.log('componentWillMount', Firebase.displayName);
+      const refs = _.isFunction(mapRefsToProps) ? mapRefsToProps(props, firebase) : {};
 
-      // Handle subscriptions to refs
-      // FIXME: Do this again when props change
-      const refs = _.isFunction(mapRefsToProps) ? mapRefsToProps(this.props, firebase) : {};
       const unsubscriptions = _.mapValues(refs, (path, key) => {
-        const onValue = snapshot => this.setState({...this.state, [key]: snapshot.val()});
+        const onValue = snapshot => {
+          const val = snapshot.val();
+          console.log('onValue', Firebase.displayName, key, val);
+          this.setState({...this.state, [key]: val});
+        };
 
         // FIXME: Wrap this in a function that checks if return value is string and then
         // handles it as below
@@ -72,7 +73,27 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
         return firebase.database().ref(path).on('value', onValue);
       });
 
-      this.unsubscriptions = unsubscriptions;
+      return unsubscriptions;
+    }
+
+    _unsubscribe () {
+      const {firebase} = this.context;
+
+      _.forEach(this.unsubscriptions, (path, fn) =>
+        _.isFunction(fn) && firebase.database().ref(path).off('value', fn));
+    }
+
+    componentWillReceiveProps (nextProps) {
+      console.log('componentWillReceiveProps', Firebase.displayName);
+
+      this.unsubscribe = this._unsubscribe();
+      this.unsubscriptions = this._subscribe(nextProps);
+    }
+
+    componentWillMount () {
+      console.log('componentWillMount', Firebase.displayName);
+
+      this.unsubscriptions = this._subscribe(this.props);
     }
 
     componentWillUnmount () {
@@ -123,8 +144,10 @@ export const authProvider = wrappedComponent =>
     componentWillMount () {
       const {firebase} = this.context;
 
-      this.unsubscribe = firebase.auth().onAuthStateChanged(user =>
-        this.setState({...this.state, user}));
+      this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
+        console.log('onAuthStateChanged', AuthProvider.displayName, user);
+        this.setState({...this.state, user});
+      });
     }
 
     componentWillUnmount () {
