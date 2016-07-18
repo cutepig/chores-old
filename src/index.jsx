@@ -49,29 +49,30 @@ UserView.propTypes = {
   logout: PropTypes.func.isRequired
 };
 
-const UserGroupsView = ({groups}) => {
-  console.log('UserGroupsView', groups);
-  return <div className="user-groups">
-    <ul className="user-groups__list">
-    {_.map(groups, (name, id) =>
-      <li key={id}>{name}</li>
-    )}
-    </ul>
+const GroupSelectView = ({groups, onSelectGroup}) =>
+  <div className="group-select">
+    <label className="group-select__label">
+      Select group
+      <select className="group-select__select" defaultValue="" onChange={onSelectGroup}>
+        <option disabled value="">Select group</option>
+        {_.map(groups, (name, id) =>
+          <option key={id} value={id}>{name}</option>
+        )}
+      </select>
+    </label>
   </div>;
-}
 
-UserGroupsView.propTypes = {
-  user: PropTypes.object.isRequired,
-  groups: PropTypes.object
+GroupSelectView.propTypes = {
+  groups: PropTypes.object,
+  onSelectGroup: PropTypes.func.isRequired
 };
 
-const UserGroups = _.flowRight(
+const GroupSelect = _.flowRight(
   authProvider,
-  conditionalRender(({user}) => !!user),
-  connect(({user}) => ({
+  connect(({user}, firebase) => ({
     groups: user && `/users/${user.uid}/groups`
   }))
-)(UserGroupsView);
+)(GroupSelectView);
 
 const User = connect(null, firebase => ({
   login: () => {
@@ -83,11 +84,18 @@ const User = connect(null, firebase => ({
     firebase.auth().signOut()
 }))(authProvider(UserView));
 
+const AuthView = _.flowRight(
+  authProvider,
+  conditionalRender(({user}) => !!user)
+)(({children}) => React.Children.only(children));
+
 function App () {
   return <Provider firebase={firebase}>
     <div className="app">
       <User />
-      <UserGroups />
+      <AuthView>
+        <GroupSelect onSelectGroup={console.log.bind(console, 'onSelectGroup')}/>
+      </AuthView>
     </div>
   </Provider>;
 };

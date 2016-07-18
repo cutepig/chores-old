@@ -84,7 +84,7 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
     }
 
     componentWillReceiveProps (nextProps) {
-      console.log('componentWillReceiveProps', Firebase.displayName);
+      console.log('componentWillReceiveProps', Firebase.displayName, nextProps);
 
       this.unsubscribe = this._unsubscribe();
       this.unsubscriptions = this._subscribe(nextProps);
