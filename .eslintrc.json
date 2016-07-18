@@ -1,0 +1,42 @@
+{
+    "env": {
+        "node": true,
+        "es6": true
+    },
+    "environments": {
+      "commonjs": true,
+      "es6": true
+    },
+    "extends": ["standard", "plugin:react/recommended"],
+    "parserOptions": {
+        "ecmaVersion": 7,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "impliedStrict": true,
+            "experimentalObjectRestSpread": true
+        }
+    },
+    "plugins": [
+        "react", "standard", "promise"
+    ],
+    "rules": {
+        "arrow-body-style": [2, "as-needed"],
+        "array-callback-return": 2,
+        "arrow-parens": [2, "as-needed"],
+        "arrow-spacing": 2,
+        "curly": [2, "multi-or-nest", "consistent"],
+        "eol-last": 0,
+        "indent": [2, 2],
+        "quotes": [2, "single"],
+        "linebreak-style": [0, "unix"],
+        "no-console": 2,
+        "no-var": 2,
+        "padded-blocks": 0,
+        "prefer-const": 2,
+        "prefer-rest-params": 2,
+        "prefer-spread": 2,
+        "prefer-template": 2,
+        "semi": [2, "always"],
+        "valid-jsdoc": [2, { "prefer": { "return": "returns" } }]
+    }
+}
