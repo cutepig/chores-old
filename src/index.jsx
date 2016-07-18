@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import firebase from 'firebase';
 import {Provider, authProvider, connect} from './react-firebase';
 import * as _ from 'lodash';
-import {withState} from 'recompose';
+import {withState, mapProps} from 'recompose';
 
 const config = {
   apiKey: 'AIzaSyDg0XgimVokGyOIQREFSSUow441WFx5O1w',
@@ -106,6 +106,52 @@ const TaskList = connect(({groupId}) => ({
   tasks: groupId && `/groups/${groupId}/tasks`
 }))(TaskListView);
 
+const DeedCard = ({deed}) =>
+  <article className="deed-card">
+    <h1>{deed.task.name}</h1>
+    <h2>{deed.value || deed.task.value}</h2>
+    <h3>{deed.member && deed.displayName}</h3>
+  </article>;
+
+DeedCard.propTypes = {
+  deed: PropTypes.object.isRequired
+};
+
+const DeedListConnect = connect(({groupId}, firebase) => ({
+  deeds: groupId && `/groups/${groupId}/deeds`,
+  tasks: groupId && `/groups/${groupId}/tasks`
+}));
+
+const DeedListMapper = ({deeds, tasks, user, ...rest}) => ({
+  deeds: _.mapValues(
+    _.filter(deeds, deed => deed.memberId === user.uid),
+    deed => ({
+      task: tasks[deed.taskId],
+      member: user
+    })),
+  ...rest
+});
+
+const DeedListView = ({deeds}) =>
+  <ul className="deed-list">
+  {_.map(deeds, (deed, id) =>
+    <li className="deed-list__item" key={id}>
+      <DeedCard deed={deed} />
+    </li>
+  )}
+  </ul>;
+
+DeedListView.propTypes = {
+  groupId: PropTypes.string,
+  deeds: PropTypes.object
+};
+
+const DeedList = _.flowRight(
+  DeedListConnect,
+  authProvider,
+  mapProps(DeedListMapper)
+)(DeedListView);
+
 const GroupSelectView = ({groups, onSelectGroup}) => {
   const onChange = ev => onSelectGroup(ev.currentTarget.value);
 
@@ -142,7 +188,10 @@ const AppPanelView = ({group, setGroup}) => {
     <LogoutButton />
     <GroupSelect onSelectGroup={onSelectGroup} />
     <h3>Group ID: {group}</h3>
-    <TaskList groupId={group}/>
+    <h4>Tasks:</h4>
+    <TaskList groupId={group} />
+    <h4>Deeds:</h4>
+    <DeedList groupId={group} />
   </div>;
 };
 
