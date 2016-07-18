@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import ReactDOM from 'react-dom';
 import firebase from 'firebase';
-import {Provider, connect} from './react-firebase';
+import {Provider, authProvider, connect} from './react-firebase';
 import * as _ from 'lodash';
 
 const config = {
@@ -27,21 +27,33 @@ GroupsView.propTypes = {
   groups: PropTypes.object
 };
 
-const UserView = ({user}) =>
+const UserView = ({user, login, logout}) =>
   <div className="user">
     {user
       ? `${user.uid} ${user.displayName}`
-      : 'No user'
+      : 'Not logged in'
+    }
+    {user
+      ? <button className="user__logout" onClick={logout}>Logout</button>
+      : <button className="user__login" onClick={login}>Login</button>
     }
   </div>;
 
 UserView.propTypes = {
-  user: PropTypes.object
+  user: PropTypes.object,
+  login: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired
 };
 
 const User = connect(null, firebase => ({
-  user: firebase.auth().currentUser
-}))(UserView);
+  login: () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('profile,email');
+    return firebase.auth().signInWithPopup(provider);
+  },
+  logout: () =>
+    firebase.auth().signOut()
+}))(authProvider(UserView));
 
 const Groups = connect({
   groups: '/groups'

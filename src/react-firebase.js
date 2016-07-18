@@ -23,7 +23,6 @@ export class Provider extends React.Component {
   }
 
   render () {
-    console.log('Provider children', this.props.children);
     return React.Children.only(this.props.children);
   }
 }
@@ -44,7 +43,6 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
     }
 
     componentWillMount () {
-      console.log(`${this.displayName} componentWillMount`);
       const {firebase} = this.context;
 
       // TODO: Allow refs to be functions
@@ -60,7 +58,6 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
     }
 
     componentWillUnmount () {
-      console.log(`${this.displayName} componentWillUnmount`);
       const {firebase} = this.context;
 
       // Handle unsubscriptions
@@ -71,8 +68,43 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
     render () {
       const {props, state} = this;
       const {firebase} = this.context;
+      // TODO: Map over these and wrap functions in promise catcher or find a better strategy
       const firebaseProps = _.isFunction(mapFirebaseToProps) ? mapFirebaseToProps(firebase) : {};
 
       return React.createElement(wrappedComponent, {...props, ...state, ...firebaseProps, firebase});
+    }
+  };
+
+// Erm provide login functionality from here?
+export const authProvider = wrappedComponent =>
+  class AuthProvider extends React.Component {
+    static get displayName () {
+      return `AuthProvider(${wrappedComponent.displayName})`;
+    }
+
+    static get contextTypes () {
+      return {firebase: firebaseShape};
+    }
+
+    constructor (props) {
+      super(props);
+      this.state = {};
+    }
+
+    componentWillMount () {
+      const {firebase} = this.context;
+
+      this.unsubscribe = firebase.auth().onAuthStateChanged(user =>
+        this.setState({...this.state, user}));
+    }
+
+    componentWillUnmount () {
+      this.unsubscribe && this.unsubscribe();
+    }
+
+    render () {
+      const {props, state} = this;
+
+      return React.createElement(wrappedComponent, {...props, ...state});
     }
   };
