@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import {mapValues, filter, map, get} from 'lodash';
 import {compose, mapProps} from 'recompose';
-import {connect, authProvider} from 'react-firebase';
+import {connect, authProvider} from 'refirebase';
 import DeedCard from 'chores/deed-card';
 
 const DeedListConnect = connect(({groupId}, firebase) => ({
