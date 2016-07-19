@@ -1,7 +1,8 @@
 import React, {PropTypes} from 'react';
-import {compose} from 'recompose';
+import {compose, withReducer, withHandlers, withState, mapProps} from 'recompose';
 import {assign} from 'lodash';
 import {authProvider, connect} from 'refirebase';
+import serialize from 'form-serialize';
 
 // FIXME: Change to use of recompose.branch
 // @see https://github.com/acdlite/recompose/blob/master/docs/API.md#branch
@@ -56,3 +57,40 @@ export const AdminView = compose(
 AdminView.propTypes = assign({}, AdminView.propTypes, {
   groupId: PropTypes.string
 });
+
+export const formProvider = ({onChange, onSubmit}) => compose(
+  withReducer('formData', 'onFormChange', (formData, ev) => ({
+    ...serialize(ev.target.form, {hash: true, disabled: true, empty: true}),
+    __form: ev.target.form
+  }), {__form: null}),
+  withHandlers({
+    onSubmit: props => ev => {
+      ev.preventDefault();
+      // TODO: Integrated validation or whatnot
+      return onSubmit(props)(
+        serialize(props.formData.__form, {hash: true, disabled: true, empty: true}),
+        props.formData.__form
+      );
+    }
+  }),
+  // Fight against event pooling which causes problems accessing target or currentTarget
+  // @see https://facebook.github.io/react/docs/events.html#event-pooling
+  mapProps(props => assign({}, props, {
+    onFormChange: ev => {
+      ev.persist();
+      // TODO: We can map with onChange here cause we got the props
+      return props.onFormChange(ev);
+    },
+    onSubmit: ev => {
+      ev.persist();
+      return props.onSubmit(ev);
+    }
+  }))
+);
+
+export const modalProvider = compose(
+  withState('isOpen', 'setOpen', false),
+  withHandlers({
+    onOpen: ({setOpen}) => ev => setOpen(true),
+    onClose: ({setOpen}) => ev => setOpen(false)
+  }));

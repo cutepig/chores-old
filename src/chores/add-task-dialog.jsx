@@ -9,8 +9,9 @@ import {compose, withState, withHandlers} from 'recompose';
 import serialize from 'form-serialize';
 import {v4} from 'uuid';
 import {connect} from 'refirebase';
+import {formProvider, modalProvider} from 'chores/view-utils';
 
-export const AddTaskDialogView = ({isOpen, onOpen, onClose, onSubmit, setFormTarget}) =>
+export const AddTaskDialogView = ({isOpen, onOpen, onClose, onSubmit, onFormChange}) =>
   <div className="add-task-dialog">
     <FloatingActionButton onTouchTap={onOpen}>
       <ContentAdd />
@@ -26,7 +27,7 @@ export const AddTaskDialogView = ({isOpen, onOpen, onClose, onSubmit, setFormTar
         modal
         open={isOpen}>
 
-      <form className="add-task-dialog__dialog__form" ref={setFormTarget}>
+      <form className="add-task-dialog__dialog__form" onChange={onFormChange}>
         <TextField floatingLabelText="Task name" name="name" required /><br/>
         <TextField floatingLabelText="Task description" name="description" required /><br/>
         {/* FIXME: Get the state of the component to show the actual value */}
@@ -42,31 +43,23 @@ AddTaskDialogView.propTypes = {
   onOpen: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  setFormTarget: PropTypes.func.isRequired
+  onFormChange: PropTypes.func.isRequired
 };
 
 const AddTaskDialog = compose(
-  withState('isOpen', 'setOpen', false),
-  withHandlers({
-    onOpen: ({setOpen}) => ev => setOpen(true),
-    onClose: ({setOpen}) => ev => setOpen(false)
-  }),
-  withState('formTarget', 'setFormTarget', null),
   connect(null, (firebase, {groupId}) => ({
     createTask: task =>
       groupId ? firebase.database().ref(`/groups/${groupId}/tasks/${v4()}`).set(task) : Promise.reject()
   })),
-  withHandlers({
-    onSubmit: ({onClose, formTarget, createTask}) => ev => {
-      ev.preventDefault();
-      const task = serialize(formTarget, {hash: true, disabled: true, empty: true});
-      // FIXME: parseFloat try/catch or smth else
+  modalProvider,
+  formProvider({
+    // onChange: formData => formData
+    onSubmit: ({createTask, onClose}) => (task, form) =>
       createTask({...task, value: parseFloat(task.value)})
         .then(() => {
-          formTarget.reset();
+          form.reset();
           onClose();
-        });
-    }
+        })
   })
 )(AddTaskDialogView);
 
