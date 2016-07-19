@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import {map} from 'lodash';
 import {compose, withHandlers} from 'recompose';
-import {connect, authProvider} from './react-firebase';
+import {connect, authProvider} from 'refirebase';
 
 export const GroupSelectView = ({groups, onChange}) =>
   <div className="group-select">

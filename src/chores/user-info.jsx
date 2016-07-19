@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {authProvider} from './react-firebase';
+import {authProvider} from 'refirebase';
 
 export const UserInfoView = ({user}) =>
   <div className="user-info">

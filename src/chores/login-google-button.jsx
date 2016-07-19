@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {connect} from './react-firebase';
+import {connect} from 'refirebase';
 
 export const LoginGoogleButtonView = ({login}) =>
   <button className="login-google" onClick={login}>

@@ -44,7 +44,7 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
 
     shouldComponentUpdate () {
       // TODO:
-      console.log('shouldComponentUpdate', Firebase.displayName);
+      console.log('shouldComponentUpdate', Firebase.displayName);     // eslint-disable-line no-console
       return true;
     }
 
@@ -56,7 +56,7 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
       const unsubscriptions = _.mapValues(refs, (path, key) => {
         const onValue = snapshot => {
           const val = snapshot.val();
-          console.log('onValue', Firebase.displayName, key, val);
+          console.log('onValue', Firebase.displayName, key, val);    // eslint-disable-line no-console
           this.setState({...this.state, [key]: val});
         };
 
@@ -84,14 +84,14 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
     }
 
     componentWillReceiveProps (nextProps) {
-      console.log('componentWillReceiveProps', Firebase.displayName, {...nextProps});
+      console.log('componentWillReceiveProps', Firebase.displayName, {...nextProps});     // eslint-disable-line no-console
 
       this.unsubscribe = this._unsubscribe();
       this.unsubscriptions = this._subscribe(nextProps);
     }
 
     componentWillMount () {
-      console.log('componentWillMount', Firebase.displayName);
+      console.log('componentWillMount', Firebase.displayName);        // eslint-disable-line no-console
 
       this.unsubscriptions = this._subscribe(this.props);
     }
@@ -99,7 +99,7 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
     componentWillUnmount () {
       const {firebase} = this.context;
 
-      console.log('componentWillUnmount', Firebase.displayName);
+      console.log('componentWillUnmount', Firebase.displayName);      // eslint-disable-line no-console
 
       // Handle unsubscriptions
       _.forEach(this.unsubscriptions, (path, fn) =>
@@ -137,7 +137,7 @@ export const authProvider = wrappedComponent =>
     }
 
     shouldComponentUpdate () {
-      console.log('shouldComponentUpdate', AuthProvider.displayName);
+      console.log('shouldComponentUpdate', AuthProvider.displayName);     // eslint-disable-line no-console
       return true;
     }
 
@@ -150,7 +150,7 @@ export const authProvider = wrappedComponent =>
       // Maybe use static unsubscribe and reference counting on componentWillMount/Unmount?
       // Argh that wouldn't solve anything since we still have many instances of each different class
       this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
-        console.log('onAuthStateChanged', AuthProvider.displayName, user);
+        console.log('onAuthStateChanged', AuthProvider.displayName, user);    // eslint-disable-line no-console
         this.setState({...this.state, user});
       });
     }

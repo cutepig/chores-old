@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {connect} from './react-firebase';
+import {connect} from 'refirebase';
 
 export const LogoutButtonView = ({logout}) =>
   <button className="logout" onClick={logout}>

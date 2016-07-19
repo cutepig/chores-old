@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
-import LoginGoogleButton from './login-google-button';
-import AppPanel from './app-panel';
-import {AuthView, NonAuthView} from './view-utils';
+import LoginGoogleButton from 'chores/login-google-button';
+import AppPanel from 'chores/app-panel';
+import {AuthView, NonAuthView} from 'chores/view-utils';
 
 export const App = () =>
   <div className="app">

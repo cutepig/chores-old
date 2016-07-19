@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import firebase from 'firebase';
-import {Provider} from './react-firebase';
-import App from './app';
+import {Provider} from 'refirebase';
+import App from 'chores/app';
 
 const config = {
   apiKey: 'AIzaSyDg0XgimVokGyOIQREFSSUow441WFx5O1w',

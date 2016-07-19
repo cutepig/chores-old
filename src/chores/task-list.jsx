@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import {map} from 'lodash';
-import {connect} from './react-firebase';
-import TaskCard from './task-card';
+import {connect} from 'refirebase';
+import TaskCard from 'chores/task-card';
 
 export const TaskListView = ({tasks}) =>
   <ul className="task-list">

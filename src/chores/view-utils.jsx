@@ -1,6 +1,6 @@
 import React from 'react';
 import {compose} from 'recompose';
-import {authProvider} from './react-firebase';
+import {authProvider} from 'refirebase';
 
 export const conditionalRender = predicate => wrappedComponent =>
   class ConditionalRender extends React.Component {

@@ -1,10 +1,10 @@
 import React, {PropTypes} from 'react';
 import {withState} from 'recompose';
-import UserInfo from './user-info';
-import LogoutButton from './logout-button';
-import GroupSelect from './group-select';
-import TaskList from './task-list';
-import DeedList from './deed-list';
+import UserInfo from 'chores/user-info';
+import LogoutButton from 'chores/logout-button';
+import GroupSelect from 'chores/group-select';
+import TaskList from 'chores/task-list';
+import DeedList from 'chores/deed-list';
 
 export const AppPanelView = ({group, setGroup}) => {
   const onSelectGroup = groupId => setGroup(() => groupId);

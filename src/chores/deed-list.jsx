@@ -1,8 +1,8 @@
 import React, {PropTypes} from 'react';
 import {mapValues, filter, map, get} from 'lodash';
 import {compose, mapProps} from 'recompose';
-import {connect, authProvider} from './react-firebase';
-import DeedCard from './deed-card';
+import {connect, authProvider} from 'react-firebase';
+import DeedCard from 'chores/deed-card';
 
 const DeedListConnect = connect(({groupId}, firebase) => ({
   deeds: groupId && `/groups/${groupId}/deeds`,
