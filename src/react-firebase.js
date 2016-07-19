@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import * as _ from 'lodash';
 
-const firebaseShape = PropTypes.shape({
+export const firebaseShape = PropTypes.shape({
   database: PropTypes.func.isRequired,
   auth: PropTypes.func.isRequired
 });
