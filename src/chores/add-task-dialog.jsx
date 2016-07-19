@@ -5,13 +5,12 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import TextField from 'material-ui/TextField';
 import Slider from 'material-ui/Slider';
-import {compose, withState, withHandlers} from 'recompose';
-import serialize from 'form-serialize';
+import {compose} from 'recompose';
 import {v4} from 'uuid';
 import {connect} from 'refirebase';
 import {formProvider, modalProvider} from 'chores/view-utils';
 
-export const AddTaskDialogView = ({isOpen, onOpen, onClose, onSubmit, onFormChange}) =>
+export const AddTaskDialogView = ({isOpen, formData, onOpen, onClose, onSubmit, onFormChange}) =>
   <div className="add-task-dialog">
     <FloatingActionButton onTouchTap={onOpen}>
       <ContentAdd />
@@ -28,10 +27,13 @@ export const AddTaskDialogView = ({isOpen, onOpen, onClose, onSubmit, onFormChan
         open={isOpen}>
 
       <form className="add-task-dialog__dialog__form" onChange={onFormChange}>
-        <TextField floatingLabelText="Task name" name="name" required /><br/>
-        <TextField floatingLabelText="Task description" name="description" required /><br/>
-        {/* FIXME: Get the state of the component to show the actual value */}
-        <Slider description="Task value" name="value" value={1} min={0.25} max={5} step={0.25} required />
+        <TextField floatingLabelText="Task name" name="name" value={formData.name} required /><br/>
+        <TextField floatingLabelText="Task description" name="description" value={formData.description} required /><br/>
+        {/* FIXME: Get this call onChange more often */}
+        <label>
+          <Slider description="Task value" name="value" value={formData.value} min={0.25} max={5} step={0.25} required onChange={onFormChange} />
+          <span>{`${formData.value} €`}</span>
+        </label>
       </form>
 
     </Dialog>
@@ -40,6 +42,7 @@ export const AddTaskDialogView = ({isOpen, onOpen, onClose, onSubmit, onFormChan
 AddTaskDialogView.propTypes = {
   groupId: PropTypes.string,
   isOpen: PropTypes.bool,
+  formData: PropTypes.object,
   onOpen: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
@@ -60,6 +63,8 @@ const AddTaskDialog = compose(
           form.reset();
           onClose();
         })
+  }, {  // default values
+    value: 1
   })
 )(AddTaskDialogView);
 

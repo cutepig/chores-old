@@ -58,11 +58,19 @@ AdminView.propTypes = assign({}, AdminView.propTypes, {
   groupId: PropTypes.string
 });
 
-export const formProvider = ({onChange, onSubmit}) => compose(
-  withReducer('formData', 'onFormChange', (formData, ev) => ({
-    ...serialize(ev.target.form, {hash: true, disabled: true, empty: true}),
-    __form: ev.target.form
-  }), {__form: null}),
+const findForm = node =>
+  node
+    ? (node.form || findForm(node.parentNode))
+    : node;
+
+export const formProvider = ({onChange, onSubmit}, initialFormData) => compose(
+  withReducer('formData', 'onFormChange', (formData, ev) => {
+    const form = findForm(ev.target);
+    return {
+      ...serialize(form, {hash: true, disabled: true, empty: true}),
+      __form: form
+    };
+  }, {...initialFormData, __form: null}),
   withHandlers({
     onSubmit: props => ev => {
       ev.preventDefault();
@@ -77,12 +85,12 @@ export const formProvider = ({onChange, onSubmit}) => compose(
   // @see https://facebook.github.io/react/docs/events.html#event-pooling
   mapProps(props => assign({}, props, {
     onFormChange: ev => {
-      ev.persist();
+      ev.persist && ev.persist();
       // TODO: We can map with onChange here cause we got the props
       return props.onFormChange(ev);
     },
     onSubmit: ev => {
-      ev.persist();
+      ev.persist && ev.persist();
       return props.onSubmit(ev);
     }
   }))
