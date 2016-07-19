@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import {compose} from 'recompose';
-import {authProvider} from 'refirebase';
+import {assign} from 'lodash';
+import {authProvider, connect} from 'refirebase';
 
 export const conditionalRender = predicate => wrappedComponent =>
   class ConditionalRender extends React.Component {
@@ -24,9 +25,27 @@ export const conditionalRender = predicate => wrappedComponent =>
 export const AuthView = compose(
   authProvider,
   conditionalRender(({user}) => !!user)
-)(({children}) => React.Children.only(children));
+)(function AuthView ({children}) {
+  return React.Children.only(children);
+});
 
 export const NonAuthView = compose(
   authProvider,
   conditionalRender(({user}) => !user)
-)(({children}) => React.Children.only(children));
+)(function NonAuthView ({children}) {
+  return React.Children.only(children);
+});
+
+export const AdminView = compose(
+  authProvider,
+  connect(({groupId, user}) => ({
+    member: groupId && user && `/groups/${groupId}/members/${user.uid}`
+  })),
+  conditionalRender(({member}) => !!member && !!member.isAdmin)
+)(function AdminView ({children}) {
+  return React.Children.only(children);
+});
+
+AdminView.propTypes = assign({}, AdminView.propTypes, {
+  groupId: PropTypes.string
+});

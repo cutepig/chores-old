@@ -68,6 +68,8 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
         if (!path)
           return path;
 
+        console.log(Firebase.displayName, 'subscribing to', path);   // eslint-disable-line no-console
+
         // FIXME: cancelCallbackOrContext
         // @see https://firebase.google.com/docs/reference/js/firebase.database.Reference#on
         return firebase.database().ref(path).on('value', onValue);

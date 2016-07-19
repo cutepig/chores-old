@@ -5,6 +5,8 @@ import LogoutButton from 'chores/logout-button';
 import GroupSelect from 'chores/group-select';
 import TaskList from 'chores/task-list';
 import DeedList from 'chores/deed-list';
+import {AdminView} from 'chores/view-utils';
+import AdminPanel from 'chores/admin-panel';
 
 export const AppPanelView = ({group, setGroup}) => {
   const onSelectGroup = groupId => setGroup(() => groupId);
@@ -18,6 +20,9 @@ export const AppPanelView = ({group, setGroup}) => {
     <TaskList groupId={group} />
     <h4>Deeds:</h4>
     <DeedList groupId={group} />
+    <AdminView groupId={group}>
+      <AdminPanel groupId={group} />
+    </AdminView>
   </div>;
 };
 
