@@ -1,11 +1,14 @@
 import React, {PropTypes} from 'react';
 import * as _ from 'lodash';
+import isPromise from 'is-promise';
 
 export const firebaseShape = PropTypes.shape({
   database: PropTypes.func.isRequired,
   auth: PropTypes.func.isRequired
 });
 
+// FIXME: Just use recompose.withContext
+// @see https://github.com/acdlite/recompose/blob/master/docs/API.md#withcontext
 export class Provider extends React.Component {
   static get propTypes () {
     return {
@@ -112,11 +115,23 @@ export const connect = (mapRefsToProps, mapFirebaseToProps) => wrappedComponent 
       const {props, state} = this;
       const {firebase} = this.context;
 
+      // FIXME: Move this along with subscribe
       const firebaseProps = _.mapValues(
-        _.isFunction(mapFirebaseToProps) ? mapFirebaseToProps(firebase) : {},
-        // FIXME: Some proper error handling, maybe provide an error handler in props/params?
-        // eslint-disable-next-line no-console
-        (fn, key) => (...args) => fn(...args).catch(error => console.error(Firebase.displayName, key, error))
+        _.isFunction(mapFirebaseToProps) ? mapFirebaseToProps(firebase, props) : {},
+        (fn, key) => (...args) => {
+          // Ensure this is a promise and put a catch handler there
+          const ret = fn(...args);
+          if (isPromise(ret)) {
+            // FIXME: Some proper error handling, maybe provide an error handler in props/params?
+            // eslint-disable-next-line no-console
+            return ret.catch(error => {
+              console.error(Firebase.displayName, key, error);
+              return Promise.reject(error);
+            });
+          }
+
+          return Promise.resolve(ret);
+        }
       );
 
       return React.createElement(wrappedComponent, {...props, ...state, ...firebaseProps, firebase});

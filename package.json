@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "bash -c \"NODE_PATH=./src budo src/chores/index.jsx --live -- -t babelify --extension=.jsx\""
+    "start": "bash -c \"NODE_PATH=./src budo src/chores/index.jsx:index.js --dir src/assets --live -- -t babelify --extension=.jsx\""
   },
   "keywords": [],
   "author": "",
@@ -15,11 +15,15 @@
     "babel-preset-react": "^6.11.1",
     "babelify": "^7.3.0",
     "firebase": "^3.2.0",
+    "form-serialize": "^0.7.1",
+    "is-promise": "^2.1.0",
     "lodash": "^4.13.1",
     "material-ui": "^0.15.2",
     "react": "^15.2.1",
     "react-dom": "^15.2.1",
-    "recompose": "^0.20.2"
+    "react-tap-event-plugin": "^1.0.0",
+    "recompose": "^0.20.2",
+    "uuid": "^2.0.2"
   },
   "devDependencies": {
     "babel-preset-stage-2": "^6.11.0",

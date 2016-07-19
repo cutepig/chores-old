@@ -8,13 +8,11 @@ import DeedList from 'chores/deed-list';
 import {AdminView} from 'chores/view-utils';
 import AdminPanel from 'chores/admin-panel';
 
-export const AppPanelView = ({group, setGroup}) => {
-  const onSelectGroup = groupId => setGroup(() => groupId);
-
-  return <div className="app-panel">
+export const AppPanelView = ({group, setGroup}) =>
+  <div className="app-panel">
     <UserInfo />
     <LogoutButton />
-    <GroupSelect onSelectGroup={onSelectGroup} />
+    <GroupSelect onSelectGroup={setGroup} />
     <h3>Group ID: {group}</h3>
     <h4>Tasks:</h4>
     <TaskList groupId={group} />
@@ -24,7 +22,6 @@ export const AppPanelView = ({group, setGroup}) => {
       <AdminPanel groupId={group} />
     </AdminView>
   </div>;
-};
 
 AppPanelView.propTypes = {
   group: PropTypes.string,
