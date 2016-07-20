@@ -1,8 +1,11 @@
 import React, {PropTypes} from 'react';
-import {compose, withReducer, withHandlers, withState, mapProps} from 'recompose';
+import {compose, withReducer, withHandlers, withState, mapProps, setPropTypes} from 'recompose';
 import {assign} from 'lodash';
 import {authProvider, connect} from 'refirebase';
 import serialize from 'form-serialize';
+
+// Re-exports for utility
+export {compose};
 
 // FIXME: Change to use of recompose.branch
 // @see https://github.com/acdlite/recompose/blob/master/docs/API.md#branch
@@ -44,12 +47,21 @@ export const NonAuthView = compose(
   return React.Children.only(children);
 });
 
-export const AdminView = compose(
+// Provides user and isAdmin props
+export const adminProvider = compose(
+  setPropTypes({groupId: PropTypes.string}),
   authProvider,
   connect(({groupId, user}) => ({
     member: groupId && user && `/groups/${groupId}/members/${user.uid}`
   })),
-  conditionalRender(({member}) => !!member && !!member.isAdmin)
+  mapProps(({member, ...props}) => ({
+    ...props,
+    isAdmin: !!member && !!member.isAdmin
+  })));
+
+export const AdminView = compose(
+  adminProvider,
+  conditionalRender(({isAdmin}) => isAdmin)
 )(function AdminView ({children}) {
   return React.Children.only(children);
 });
