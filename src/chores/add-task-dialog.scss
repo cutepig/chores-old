@@ -1,0 +1,11 @@
+.add-task-dialog {
+
+}
+
+// HACK: Dialog polyfill hack
+// @see https://github.com/GoogleChrome/dialog-polyfill#position
+dialog {
+  position: fixed !important;
+  top: 50% !important;
+  @include transform(translate(0, -50%));
+}

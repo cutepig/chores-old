@@ -1,10 +1,8 @@
 import React, {PropTypes} from 'react';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ContentAdd from 'material-ui/svg-icons/content/add';
-import TextField from 'material-ui/TextField';
-import Slider from 'material-ui/Slider';
+import {
+  FABButton, Icon, Button, Textfield, Slider,
+  Dialog, DialogTitle, DialogContent, DialogActions
+} from 'react-mdl';
 import {compose} from 'recompose';
 import {v4} from 'uuid';
 import {connect} from 'refirebase';
@@ -35,30 +33,29 @@ export const AddTaskDialogForm = formProvider(
 
 export const AddTaskDialogView = ({isOpen, formData, onOpen, onClose, onSubmit, onFormChange}) =>
   <div className="add-task-dialog">
-    <FloatingActionButton onTouchTap={onOpen}>
-      <ContentAdd />
-    </FloatingActionButton>
+    <div className="add-task-dialog__open">
+      <FABButton primary onTouchTap={onOpen}>
+        <Icon name="add" />
+      </FABButton>
+    </div>
 
-    <Dialog
-        className="add-task-dialog__dialog"
-        title="Add task"
-        actions={[
-          <FlatButton label="Cancel" primary onTouchTap={onClose} />,
-          <FlatButton label="Submit" primary onTouchTap={onSubmit} />
-        ]}
-        modal
-        open={isOpen}>
+    <Dialog className="add-task-dialog__dialog" onCancel={x => x} open={isOpen}>
+      <DialogTitle>Lisää tehtävä</DialogTitle>
+      <DialogContent>
+        <form className="add-task-dialog__dialog__form" onChange={onFormChange}>
+          <Textfield label="Nimike" name="name" value={formData.name || ''} required />
+          <Textfield label="Kuvaus" name="description" value={formData.description || ''} required />
+          <label>
+            {`${formData.value} €`}
+            <Slider name="value" value={parseFloat(formData.value)} min={0.25} max={5} step={0.25} required onChange={onFormChange} />
+          </label>
+        </form>
+      </DialogContent>
 
-      <form className="add-task-dialog__dialog__form" onChange={onFormChange}>
-        <TextField floatingLabelText="Task name" name="name" value={formData.name || ''} required /><br/>
-        <TextField floatingLabelText="Task description" name="description" value={formData.description || ''} required /><br/>
-        {/* FIXME: Get this call onChange more often */}
-        <label>
-          <Slider description="Task value" name="value" value={parseFloat(formData.value)} min={0.25} max={5} step={0.25} required onChange={onFormChange} />
-          <span>{`${formData.value} €`}</span>
-        </label>
-      </form>
-
+      <DialogActions fullWidth={false}>
+          <Button primary onTouchTap={onClose}>Peruuta</Button>,
+          <Button primary onTouchTap={onSubmit}>OK</Button>
+      </DialogActions>
     </Dialog>
   </div>;
 

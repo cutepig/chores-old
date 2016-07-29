@@ -87,6 +87,7 @@ export const formProvider = ({onChange, onSubmit}, initialFormData) => compose(
     onSubmit: props => ev => {
       ev.preventDefault();
       // TODO: Integrated validation or whatnot
+      // TODO: Clear the form
       return onSubmit(props)(
         serialize(props.formData.__form, {hash: true, disabled: true, empty: true}),
         props.formData.__form

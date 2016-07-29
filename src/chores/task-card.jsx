@@ -18,11 +18,11 @@ export const TaskCard = ({task, isAdmin, removeTask, createDeed}) =>
     </CardText>
     <CardText>{task.description}</CardText>
     <CardActions>
-      <Button ripple onClick={createDeed}>
+      <Button onTouchTap={createDeed}>
         Tehty
       </Button>
       {isAdmin &&
-        <Button accent ripple onClick={removeTask}>
+        <Button accent onTouchTap={removeTask}>
           Poista
         </Button>
       }
