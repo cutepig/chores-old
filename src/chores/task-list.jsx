@@ -55,8 +55,8 @@ const TaskList = compose(
     removeTaskFactory: ({removeTask}) => taskId => () =>
       removeTask(taskId),
     // TODO: Make dem damn models and hold id's in the models (and utils!)
-    createDeedFactory: ({createDeed, user}) => taskId => () =>
-      createDeed({taskId, memberId: user.uid})
+    createDeedFactory: ({createDeed, user, tasks}) => taskId => () =>
+      createDeed({taskId, memberId: user.uid, value: tasks[taskId].value})
   }),
   mapProps(TaskListMapper)
 )(TaskListView);
