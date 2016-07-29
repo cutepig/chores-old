@@ -1,11 +1,13 @@
-.task-card {
+.earnings {
+  margin-bottom: 1em;
+
   &__title { margin: 0; }
 
   &__status {
     &__approved,
     &__pending {
-      display: inline-block;
-      width: 50%;
+      display: block;
+      margin-bottom: 0.5em;
 
       &:before {
         display: inline-block;

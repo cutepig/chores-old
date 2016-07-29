@@ -34,7 +34,7 @@ export const AddTaskDialogForm = formProvider(
 export const AddTaskDialogView = ({isOpen, formData, onOpen, onClose, onSubmit, onFormChange}) =>
   <div className="add-task-dialog">
     <div className="add-task-dialog__open">
-      <FABButton primary onTouchTap={onOpen}>
+      <FABButton primary mini onTouchTap={onOpen}>
         <Icon name="add" />
       </FABButton>
     </div>

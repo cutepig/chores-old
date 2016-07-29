@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react';
+import {Card, CardTitle, CardText} from 'react-mdl';
 import {reduce, filter, get} from 'lodash';
 import {compose, setPropTypes, mapProps} from 'recompose';
 
@@ -17,13 +18,19 @@ const EarningsMapper = ({deeds, tasks, user}) => ({
 });
 
 const EarningsView = ({user, approved, pending}) =>
-  <article className="earnings">
-    <h1>{user.displayName}</h1>
-    <ul>
-      <li key="approved">Approved: {approved} €</li>
-      <li key="pending">Pending: {pending} €</li>
-    </ul>
-  </article>;
+  <Card className="earnings" shadow={1}>
+    <CardTitle>
+      <h4 className="earnings__title">{user.displayName}</h4>
+    </CardTitle>
+    <CardText className="earnings__status">
+      <div className="earnings__status__approved">
+        Hyväksytty: {approved} €
+      </div>
+      <div className="earnings__status__pending">
+        Odottaa: {pending}
+      </div>
+    </CardText>
+  </Card>;
 
 EarningsView.propTypes = {
   user: PropTypes.object.isRequired,

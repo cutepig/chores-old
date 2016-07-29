@@ -32,12 +32,10 @@ export const AppPanelView = ({groupId, group, user, member, isAdmin, groups, tas
     <GroupSelect groups={get(member, 'groups')} onSelectGroup={setGroup} />
     {group &&
       <div className="app-panel__group">
-        <h3>{get(group, 'name')} ({groupId})</h3>
-        <h4>Earnings</h4>
+        <h3>{get(group, 'name')}</h3>
         <Earnings user={user} tasks={tasks} deeds={deeds} />
         <TaskList user={user} isAdmin={isAdmin} groupId={groupId} tasks={tasks} deeds={deeds} />
         {isAdmin && <AdminPanel groupId={groupId} />}
-        <h4>Deeds:</h4>
         <DeedList user={user} isAdmin={isAdmin} groupId={groupId} tasks={tasks} deeds={deeds} />
       </div>
     }

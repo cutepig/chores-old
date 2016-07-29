@@ -40,6 +40,7 @@
     "react-mdl": "^1.6.1",
     "react-tap-event-plugin": "^1.0.0",
     "recompose": "^0.20.2",
+    "reset-css": "^2.0.20160720",
     "uuid": "^2.0.2"
   },
   "devDependencies": {

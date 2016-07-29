@@ -1,18 +1,30 @@
 import React, {PropTypes} from 'react';
+import {Card, CardTitle, CardText, CardActions, Button} from 'react-mdl';
 import {get} from 'lodash';
 
 export const DeedCard = ({deed, isAdmin, approveDeed}) =>
-  <article className="deed-card">
-    <h1>{get(deed, ['task', 'name'])}</h1>
-    <h2>{get(deed, 'value', get(deed, ['task', 'value']))}</h2>
-    <h3>{get(deed, ['member', 'displayName'])}</h3>
+  <Card className="deed-card" shadow={1}>
+    <CardTitle>
+      <h4 className="deed-card__title">
+        {get(deed, ['task', 'name'])}&nbsp;
+        <small>
+          {get(deed, 'value', get(deed, ['task', 'value']))}
+        </small>
+      </h4>
+    </CardTitle>
+    <CardTitle>
+      <h6 className="deed-card__subtitle">
+        {get(deed, ['member', 'displayName'])}
+      </h6>
+    </CardTitle>
+    <CardText>{(new Date(get(deed, 'ts', 0))).toString()}</CardText>
     {isAdmin &&
-      <div className="deed-card__admin">
-        <button onClick={() => approveDeed(false)}>Disapprove</button>
-        <button onClick={() => approveDeed(true)}>Approve</button>
-      </div>
+      <CardActions>
+        <Button onTouchTap={() => approveDeed(true)}>Hyväksy</Button>
+        <Button accent onTouchTap={() => approveDeed(false)}>Poista</Button>
+      </CardActions>
     }
-  </article>;
+  </Card>;
 
 DeedCard.propTypes = {
   deed: PropTypes.object.isRequired,

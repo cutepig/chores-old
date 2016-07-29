@@ -57,7 +57,13 @@ const TaskList = compose(
       removeTask(taskId),
     // TODO: Make dem damn models and hold id's in the models (and utils!)
     createDeedFactory: ({createDeed, user, tasks}) => taskId => () =>
-      createDeed({taskId, memberId: user.uid, value: tasks[taskId].value})
+      createDeed({
+        taskId,
+        memberId: user.uid,
+        value: tasks[taskId].value,
+        // FIXME: Full ISO string with timezone
+        ts: Date.now()
+      })
   }),
   mapProps(TaskListMapper)
 )(TaskListView);

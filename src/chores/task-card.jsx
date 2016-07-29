@@ -4,9 +4,11 @@ import {get} from 'lodash';
 
 export const TaskCard = ({task, isAdmin, removeTask, createDeed}) =>
   <Card className="task-card" shadow={1}>
-    <CardTitle className="task-card__header">
-      {get(task, 'name')}&nbsp;
-      <small>{get(task, 'value')} €</small>
+    <CardTitle>
+      <h4 className="task-card__title">
+        {get(task, 'name')}&nbsp;
+        <small>{get(task, 'value')} €</small>
+      </h4>
     </CardTitle>
     <CardText className="task-card__status">
       <div className="task-card__status__approved">
