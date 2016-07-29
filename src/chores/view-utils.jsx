@@ -97,6 +97,7 @@ export const formProvider = ({onChange, onSubmit}, initialFormData) => compose(
   // @see https://facebook.github.io/react/docs/events.html#event-pooling
   mapProps(props => assign({}, props, {
     onFormChange: ev => {
+      // FIXME: Still not working in all cases, try pressing kbd arrows on a slider!
       ev.persist && ev.persist();
       // TODO: We can map with onChange here cause we got the props
       return props.onFormChange(ev);

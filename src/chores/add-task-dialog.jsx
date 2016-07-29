@@ -28,6 +28,8 @@ export const AddTaskDialogForm = formProvider(
         })
   },
   {  // default values
+    name: '',
+    description: '',
     value: 1
   });
 
@@ -48,11 +50,11 @@ export const AddTaskDialogView = ({isOpen, formData, onOpen, onClose, onSubmit, 
         open={isOpen}>
 
       <form className="add-task-dialog__dialog__form" onChange={onFormChange}>
-        <TextField floatingLabelText="Task name" name="name" value={formData.name} required /><br/>
-        <TextField floatingLabelText="Task description" name="description" value={formData.description} required /><br/>
+        <TextField floatingLabelText="Task name" name="name" value={formData.name || ''} required /><br/>
+        <TextField floatingLabelText="Task description" name="description" value={formData.description || ''} required /><br/>
         {/* FIXME: Get this call onChange more often */}
         <label>
-          <Slider description="Task value" name="value" value={formData.value} min={0.25} max={5} step={0.25} required onChange={onFormChange} />
+          <Slider description="Task value" name="value" value={parseFloat(formData.value)} min={0.25} max={5} step={0.25} required onChange={onFormChange} />
           <span>{`${formData.value} €`}</span>
         </label>
       </form>
