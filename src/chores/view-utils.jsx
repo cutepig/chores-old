@@ -5,7 +5,7 @@ import {authProvider, connect} from 'refirebase';
 import serialize from 'form-serialize';
 
 // Re-exports for utility
-export {compose};
+export {compose, connect};
 
 // FIXME: Change to use of recompose.branch
 // @see https://github.com/acdlite/recompose/blob/master/docs/API.md#branch
