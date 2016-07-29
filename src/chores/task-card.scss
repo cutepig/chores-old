@@ -1,0 +1,25 @@
+.task-card {
+  max-width: 320px;
+  width: 100%;
+
+  &__status {
+    &__approved,
+    &__pending {
+      display: inline-block;
+      width: 50%;
+
+      &:before {
+        display: inline-block;
+        content: '';
+        width: 1em;
+        height: 1em;
+        margin-right: 0.5em;
+        border-radius: 50%;
+      }
+    }
+
+    &__approved:before { background-color: green; }
+
+    &__pending:before { background-color: orange; }
+  }
+}

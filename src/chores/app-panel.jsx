@@ -35,7 +35,6 @@ export const AppPanelView = ({groupId, group, user, member, isAdmin, groups, tas
         <h3>{get(group, 'name')} ({groupId})</h3>
         <h4>Earnings</h4>
         <Earnings user={user} tasks={tasks} deeds={deeds} />
-        <h4>Tasks:</h4>
         <TaskList user={user} isAdmin={isAdmin} groupId={groupId} tasks={tasks} deeds={deeds} />
         {isAdmin && <AdminPanel groupId={groupId} />}
         <h4>Deeds:</h4>

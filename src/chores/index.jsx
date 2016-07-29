@@ -1,10 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import 'react-mdl/extra/material';
+import dialogPolyfill from 'dialog-polyfill';
 import firebase from 'firebase';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import {Provider} from 'refirebase';
 import App from 'chores/app';
+
+window.dialogPolyfill = dialogPolyfill;
 
 const config = {
   apiKey: 'AIzaSyDg0XgimVokGyOIQREFSSUow441WFx5O1w',

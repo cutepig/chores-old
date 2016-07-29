@@ -1,17 +1,33 @@
 import React, {PropTypes} from 'react';
+import {Card, CardTitle, CardText, CardActions, Button} from 'react-mdl';
+import {get} from 'lodash';
 
 export const TaskCard = ({task, isAdmin, removeTask, createDeed}) =>
-  <article className="task-card">
-    <h1>{task.name}</h1>
-    <h2>{task.value}</h2>
-    <ul>
-      <li><b>Approved: </b>{task.approved.length}</li>
-      <li><b>Pending: </b>{task.pending.length}</li>
-    </ul>
-    <p>{task.description}</p>
-    <button onClick={createDeed}>I did this!</button>
-    {isAdmin && <button onClick={removeTask}>Remove</button>}
-  </article>;
+  <Card className="task-card" shadow={1}>
+    <CardTitle className="task-card__header">
+      {get(task, 'name')}&nbsp;
+      <small>{get(task, 'value')} €</small>
+    </CardTitle>
+    <CardText className="task-card__status">
+      <div className="task-card__status__approved">
+        {task.approved.length}
+      </div>
+      <div className="task-card__status__pending">
+        {task.pending.length}
+      </div>
+    </CardText>
+    <CardText>{task.description}</CardText>
+    <CardActions>
+      <Button ripple onClick={createDeed}>
+        Tehty
+      </Button>
+      {isAdmin &&
+        <Button accent ripple onClick={removeTask}>
+          Poista
+        </Button>
+      }
+    </CardActions>
+  </Card>;
 
 TaskCard.propTypes = {
   task: PropTypes.object.isRequired,
