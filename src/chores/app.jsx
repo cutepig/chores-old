@@ -1,20 +1,31 @@
 import React, {PropTypes} from 'react';
+import {compose} from 'recompose';
+import {connect, authProvider} from 'refirebase';
 import LoginGoogleButton from 'chores/login-google-button';
 import AppPanel from 'chores/app-panel';
-import {AuthView, NonAuthView} from 'chores/view-utils';
 
-export const App = () =>
+// TODO: Fetch user and groups
+
+const AppConnect = connect(({user}) => ({
+  member: user && `/users/${user.uid}`
+}));
+
+export const AppView = ({user, member}) =>
   <div className="app">
-    <AuthView>
-      <AppPanel />
-    </AuthView>
-    <NonAuthView>
-      <LoginGoogleButton />
-    </NonAuthView>
+    {user && member
+      ? <AppPanel user={user} member={member} />
+      : <LoginGoogleButton />
+    }
   </div>;
 
-App.propTypes = {
-  children: PropTypes.node
+AppView.propTypes = {
+  user: PropTypes.object,
+  member: PropTypes.object
 };
+
+const App = compose(
+  authProvider,
+  AppConnect
+)(AppView);
 
 export default App;

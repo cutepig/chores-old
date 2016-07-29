@@ -10,6 +10,27 @@ import {v4} from 'uuid';
 import {connect} from 'refirebase';
 import {formProvider, modalProvider} from 'chores/view-utils';
 
+export const AddTaskDialogConnect = connect(
+  null,
+  (firebase, {groupId}) => ({
+    createTask: task =>
+      groupId ? firebase.database().ref(`/groups/${groupId}/tasks/${v4()}`).set(task) : Promise.reject()
+  }));
+
+export const AddTaskDialogForm = formProvider(
+  {
+    // onChange: formData => formData
+    onSubmit: ({createTask, onClose}) => (task, form) =>
+      createTask({...task, value: parseFloat(task.value)})
+        .then(() => {
+          form.reset();
+          onClose();
+        })
+  },
+  {  // default values
+    value: 1
+  });
+
 export const AddTaskDialogView = ({isOpen, formData, onOpen, onClose, onSubmit, onFormChange}) =>
   <div className="add-task-dialog">
     <FloatingActionButton onTouchTap={onOpen}>
@@ -50,22 +71,9 @@ AddTaskDialogView.propTypes = {
 };
 
 const AddTaskDialog = compose(
-  connect(null, (firebase, {groupId}) => ({
-    createTask: task =>
-      groupId ? firebase.database().ref(`/groups/${groupId}/tasks/${v4()}`).set(task) : Promise.reject()
-  })),
+  AddTaskDialogConnect,
   modalProvider,
-  formProvider({
-    // onChange: formData => formData
-    onSubmit: ({createTask, onClose}) => (task, form) =>
-      createTask({...task, value: parseFloat(task.value)})
-        .then(() => {
-          form.reset();
-          onClose();
-        })
-  }, {  // default values
-    value: 1
-  })
+  AddTaskDialogForm
 )(AddTaskDialogView);
 
 export default AddTaskDialog;

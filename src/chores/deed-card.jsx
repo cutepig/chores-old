@@ -6,7 +6,12 @@ export const DeedCard = ({deed, isAdmin, approveDeed}) =>
     <h1>{get(deed, ['task', 'name'])}</h1>
     <h2>{get(deed, 'value', get(deed, ['task', 'value']))}</h2>
     <h3>{get(deed, ['member', 'displayName'])}</h3>
-    {isAdmin && <button onClick={approveDeed}>Approve</button>}
+    {isAdmin &&
+      <div className="deed-card__admin">
+        <button onClick={() => approveDeed(false)}>Disapprove</button>
+        <button onClick={() => approveDeed(true)}>Approve</button>
+      </div>
+    }
   </article>;
 
 DeedCard.propTypes = {

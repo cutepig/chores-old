@@ -1,17 +1,13 @@
 import React, {PropTypes} from 'react';
 import {mapValues, filter, map} from 'lodash';
-import {compose, withHandlers, mapProps} from 'recompose';
+import {compose, setPropTypes, withHandlers, mapProps} from 'recompose';
 import {v4} from 'uuid';
 import {connect} from 'refirebase';
-import {adminProvider} from 'chores/view-utils';
 import TaskCard from 'chores/task-card';
 
 // Fetch a list of tasks and deeds and attach bottom handlers to remove task and create a deed from task
 const TaskListConnect = connect(
-  ({groupId}, firebase) => ({
-    deeds: groupId && `/groups/${groupId}/deeds`,
-    tasks: groupId && `/groups/${groupId}/tasks`
-  }),
+  null,
   (firebase, {groupId}) => ({
     // TODO: Also remove the deeds that reference this
     removeTask: taskId =>
@@ -31,7 +27,7 @@ const TaskListMapper = ({deeds, tasks, user, ...rest}) => ({
   ...rest
 });
 
-export const TaskListView = ({groupId, isAdmin, tasks, removeTaskFactory, createDeedFactory}) =>
+export const TaskListView = ({isAdmin, tasks, removeTaskFactory, createDeedFactory}) =>
   <ul className="task-list">
   {map(tasks, (task, id) =>
     <li className="task-list__item" key={id}>
@@ -41,16 +37,21 @@ export const TaskListView = ({groupId, isAdmin, tasks, removeTaskFactory, create
   </ul>;
 
 TaskListView.propTypes = {
-  groupId: PropTypes.string,
   isAdmin: PropTypes.bool,
-  tasks: PropTypes.object,
+  tasks: PropTypes.object.isRequired,
   removeTaskFactory: PropTypes.func.isRequired,
   createDeedFactory: PropTypes.func.isRequired
 };
 
 const TaskList = compose(
+  setPropTypes({
+    groupId: PropTypes.string.isRequired,
+    isAdmin: PropTypes.bool,
+    user: PropTypes.object.isRequired,
+    tasks: PropTypes.object.isRequired,
+    deeds: PropTypes.object.isRequired
+  }),
   TaskListConnect,
-  adminProvider,
   withHandlers({
     removeTaskFactory: ({removeTask}) => taskId => () =>
       removeTask(taskId),

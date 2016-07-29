@@ -1,7 +1,6 @@
 import React, {PropTypes} from 'react';
-import {authProvider} from 'refirebase';
 
-export const UserInfoView = ({user}) =>
+export const UserInfo = ({user}) =>
   <div className="user-info">
     {user
       ? `${user.uid} ${user.displayName}`
@@ -9,10 +8,8 @@ export const UserInfoView = ({user}) =>
     }
   </div>;
 
-UserInfoView.propTypes = {
+UserInfo.propTypes = {
   user: PropTypes.object
 };
-
-const UserInfo = authProvider(UserInfoView);
 
 export default UserInfo;

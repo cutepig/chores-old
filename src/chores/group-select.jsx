@@ -1,7 +1,6 @@
 import React, {PropTypes} from 'react';
 import {map} from 'lodash';
-import {compose, withHandlers} from 'recompose';
-import {connect, authProvider} from 'refirebase';
+import {withHandlers} from 'recompose';
 
 export const GroupSelectView = ({groups, onChange}) =>
   <div className="group-select">
@@ -21,14 +20,8 @@ GroupSelectView.propTypes = {
   onChange: PropTypes.func.isRequired
 };
 
-const GroupSelect = compose(
-  authProvider,
-  connect(({user}, firebase) => ({
-    groups: user && `/users/${user.uid}/groups`
-  })),
-  withHandlers({
-    onChange: ({onSelectGroup}) => ev => onSelectGroup(ev.currentTarget.value)
-  })
-)(GroupSelectView);
+const GroupSelect = withHandlers({
+  onChange: ({onSelectGroup}) => ev => onSelectGroup(ev.currentTarget.value)
+})(GroupSelectView);
 
 export default GroupSelect;
