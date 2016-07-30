@@ -3,7 +3,6 @@ import {get, pickBy} from 'lodash';
 import {compose, withState, mapProps} from 'recompose';
 import {connect} from 'refirebase';
 import UserInfo from 'chores/user-info';
-import LogoutButton from 'chores/logout-button';
 import GroupSelect from 'chores/group-select';
 import Earnings from 'chores/earnings';
 import TaskList from 'chores/task-list';

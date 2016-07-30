@@ -1,10 +1,12 @@
 import React, {PropTypes} from 'react';
+import {Button} from 'react-mdl';
 import {connect} from 'refirebase';
 
 export const LoginGoogleButtonView = ({login}) =>
-  <button className="login-google" onClick={login}>
-    Login with Google
-  </button>;
+  <Button raised className="login-google-button" onClick={login}>
+    <div className="login-google-button__logo"></div>
+    <div className="login-google-button__text">Sign in with Google</div>
+  </Button>;
 
 LoginGoogleButtonView.propTypes = {
   login: PropTypes.func.isRequired
