@@ -28,7 +28,6 @@ export const AppPanelMapper = props => {
 export const AppPanelView = ({groupId, group, user, member, isAdmin, groups, tasks, deeds, setGroup}) =>
   <div className="app-panel">
     <UserInfo user={user} />
-    <LogoutButton />
 
     <h4>Valitse ryhmä</h4>
     <GroupSelect groups={get(member, 'groups')} onSelectGroup={setGroup} />
@@ -59,8 +58,8 @@ export const AppPanelView = ({groupId, group, user, member, isAdmin, groups, tas
 AppPanelView.propTypes = {
   groupId: PropTypes.string,
   group: PropTypes.object,
-  user: PropTypes.object,
-  member: PropTypes.object,
+  user: PropTypes.object.isRequired,
+  member: PropTypes.object.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   groups: PropTypes.object.isRequired,
   tasks: PropTypes.object.isRequired,

@@ -1,10 +1,11 @@
 import React, {PropTypes} from 'react';
+import {Button} from 'react-mdl';
 import {connect} from 'refirebase';
 
 export const LogoutButtonView = ({logout}) =>
-  <button className="logout" onClick={logout}>
+  <Button className="logout" onClick={logout}>
     Logout
-  </button>;
+  </Button>;
 
 LogoutButtonView.propTypes = {
   logout: PropTypes.func.isRequired
