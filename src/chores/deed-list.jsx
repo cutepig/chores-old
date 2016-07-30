@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react';
+import {List, ListItem} from 'react-mdl';
 import {mapValues, pickBy, map, get} from 'lodash';
 import {compose, setPropTypes, mapProps, withHandlers} from 'recompose';
 import {connect} from 'refirebase';
@@ -7,10 +8,8 @@ import DeedCard from 'chores/deed-card';
 const DeedListConnect = connect(
   null,
   (firebase, {groupId}) => ({
-    updateDeed: (deedId, deed) => {
-      console.log('updateDeed', deedId, deed)
-      return firebase.database().ref(`/groups/${groupId}/deeds/${deedId}`).set(deed)
-    }
+    updateDeed: (deedId, deed) =>
+      firebase.database().ref(`/groups/${groupId}/deeds/${deedId}`).set(deed)
   }));
 
 const DeedListMapper = ({deeds, tasks, user, ...rest}) => ({
@@ -27,13 +26,13 @@ const DeedListMapper = ({deeds, tasks, user, ...rest}) => ({
 });
 
 export const DeedListView = ({deeds, isAdmin, approveDeedFactory}) =>
-  <ul className="deed-list">
+  <List className="deed-list">
   {map(deeds, (deed, id) =>
-    <li className="deed-list__item" key={id}>
+    <ListItem className="deed-list__item" key={id}>
       <DeedCard deed={deed} isAdmin={isAdmin} approveDeed={approveDeedFactory(id)} />
-    </li>
+    </ListItem>
   )}
-  </ul>;
+  </List>;
 
 DeedListView.propTypes = {
   deeds: PropTypes.object,

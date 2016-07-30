@@ -29,13 +29,24 @@ export const AppPanelView = ({groupId, group, user, member, isAdmin, groups, tas
   <div className="app-panel">
     <UserInfo user={user} />
     <LogoutButton />
+
+    <h4>Valitse ryhmä</h4>
     <GroupSelect groups={get(member, 'groups')} onSelectGroup={setGroup} />
+
+    <hr />
+
     {group &&
       <div className="app-panel__group">
         <h3>{get(group, 'name')}</h3>
         <Earnings user={user} tasks={tasks} deeds={deeds} />
+
+        <hr />
+
         <TaskList user={user} isAdmin={isAdmin} groupId={groupId} tasks={tasks} deeds={deeds} />
         {isAdmin && <AdminPanel groupId={groupId} />}
+
+        <hr />
+
         <DeedList user={user} isAdmin={isAdmin} groupId={groupId} tasks={tasks} deeds={deeds} />
       </div>
     }

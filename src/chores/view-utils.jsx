@@ -1,11 +1,16 @@
 import React, {PropTypes} from 'react';
 import {compose, withReducer, withHandlers, withState, mapProps, setPropTypes} from 'recompose';
-import {assign} from 'lodash';
+import {assign, isFunction} from 'lodash';
 import {authProvider, connect} from 'refirebase';
 import serialize from 'form-serialize';
 
 // Re-exports for utility
 export {compose, connect};
+
+export const preventDefault = fn => ev => {
+  ev.preventDefault();
+  return isFunction(fn) && fn(ev);
+};
 
 // FIXME: Change to use of recompose.branch
 // @see https://github.com/acdlite/recompose/blob/master/docs/API.md#branch

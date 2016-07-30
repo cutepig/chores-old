@@ -1,27 +1,28 @@
 import React, {PropTypes} from 'react';
+import {List, ListItem, ListItemContent, ListItemAction, Icon} from 'react-mdl';
 import {map} from 'lodash';
-import {withHandlers} from 'recompose';
+import {preventDefault} from 'chores/view-utils';
 
-export const GroupSelectView = ({groups, onChange}) =>
+export const GroupSelect = ({groups, onSelectGroup}) =>
   <div className="group-select">
-    <label className="group-select__label">
-      Select group
-      <select className="group-select__select" defaultValue="" onChange={onChange}>
-        <option disabled value="">Select group</option>
-        {map(groups, (name, id) =>
-          <option key={id} value={id}>{name}</option>
-        )}
-      </select>
-    </label>
+    <List className="group-select__list">
+      {map(groups, (name, id) =>
+        <ListItem
+            key={id}
+            className="group-select__list__item"
+            onClick={preventDefault(() => onSelectGroup(id))}>
+          <ListItemContent>{name}</ListItemContent>
+          <ListItemAction>
+            <Icon name="chevron_right" />
+          </ListItemAction>
+        </ListItem>
+      )}
+    </List>
   </div>;
 
-GroupSelectView.propTypes = {
+GroupSelect.propTypes = {
   groups: PropTypes.object,
-  onChange: PropTypes.func.isRequired
+  onSelectGroup: PropTypes.func.isRequired
 };
-
-const GroupSelect = withHandlers({
-  onChange: ({onSelectGroup}) => ev => onSelectGroup(ev.currentTarget.value)
-})(GroupSelectView);
 
 export default GroupSelect;

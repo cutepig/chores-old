@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react';
+import {List, ListItem} from 'react-mdl';
 import {mapValues, filter, map} from 'lodash';
 import {compose, setPropTypes, withHandlers, mapProps} from 'recompose';
 import {v4} from 'uuid';
@@ -28,13 +29,13 @@ const TaskListMapper = ({deeds, tasks, user, ...rest}) => ({
 });
 
 export const TaskListView = ({isAdmin, tasks, removeTaskFactory, createDeedFactory}) =>
-  <ul className="task-list">
+  <List className="task-list">
   {map(tasks, (task, id) =>
-    <li className="task-list__item" key={id}>
+    <ListItem className="task-list__item" key={id}>
       <TaskCard isAdmin={isAdmin} task={task} removeTask={removeTaskFactory(id)} createDeed={createDeedFactory(id)} />
-    </li>
+    </ListItem>
   )}
-  </ul>;
+  </List>;
 
 TaskListView.propTypes = {
   isAdmin: PropTypes.bool,

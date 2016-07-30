@@ -5,7 +5,12 @@
 
 @import 'bourbon/app/assets/stylesheets/bourbon';
 
+@import 'group-select';
 @import 'earnings';
 @import 'task-list';
 @import 'add-task-dialog';
 @import 'deed-list';
+
+#app {
+  padding: 16px;
+}
